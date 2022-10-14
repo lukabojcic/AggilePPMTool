@@ -10,6 +10,7 @@ import store from "./store";
 import UpdateProject from './components/Project/UpdateProject';
 import ProjectBoard from './components/ProjectBoard/ProjectBoard';
 import AddProjectTask from './components/ProjectBoard/ProjectTasks/AddProjectTask';
+import RegistrationForm from "./components/Project/Registration/RegistrationForm";
 
 
 class App extends Component {
@@ -24,6 +25,7 @@ class App extends Component {
             <Route exact path="/updateProject/:id" component={UpdateProject} />
             <Route exact path="/projectBoard/:id" component={ProjectBoard} />
             <Route exact path="/addProjectTask/:id" component={AddProjectTask} />
+            <Route exact path="/Registration" component={RegistrationForm} />
           </div>
         </Router>
       </Provider>
