@@ -37,6 +37,9 @@ public class Project {
     @JsonIgnore
     private Backlog backlog;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
+
     public Project() {
     }
 
