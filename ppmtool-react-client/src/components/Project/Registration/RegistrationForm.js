@@ -1,9 +1,54 @@
 import React, { Component } from 'react';
 import classnames from "classnames";
+import PropTypes from "prop-types";
+import {connect} from "react-redux";
+import { createUser } from './../../../actions/userActions';
 
 class RegistrationForm extends Component {
+    constructor() {
+        super();
+    
+        this.state = {
+            firstName: "",
+            lastName: "",
+            username: "",
+            password: "",
+            password2: "",
+            errors: {}
+        };
+    
+        this.onChange = this.onChange.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
+      }
+    
+      //life cycle hooks
+      componentWillReceiveProps(nextProps) {
+        if (nextProps.errors) {
+          this.setState({ errors: nextProps.errors });
+        }
+      }
+    
+      onChange(e) {
+        this.setState({ [e.target.name]: e.target.value });
+      }
+    
+      onSubmit(e) {
+        e.preventDefault();
+        const createUser = {
+          firstName: this.state.firstName,
+          lastName: this.state.lastName,
+          username: this.state.username,
+          password: this.state.password,
+          password2: this.state.password2,
+        };
+        this.props.createUser(createUser, this.props.history);
+      }
+
   render() {
+    const { errors } = this.state;
+
     return ((
+
         <div className="projects">
         <div className="container">
           <div className="row">
@@ -11,14 +56,16 @@ class RegistrationForm extends Component {
               <h1 className="display-4 text-center">Registration</h1>
               <hr />
             
-              <form method="POST" enctype="utf8">
+              <form onSubmit={this.onSubmit} method="POST" encType="utf8">
                 <h6>First Name</h6>
                   <div className="form-group">
                     <input
                       type="text"
-                      className="form-control form-control-lg"
+                      className={classnames("form-control form-control-lg", {
+                        "is-invalid": errors.firstName
+                      })}
                       placeholder="First Name"
-                      name="projectName"
+                      name="firstName"
                     />
                   </div>
                   <h6>Last Name</h6>
@@ -27,7 +74,7 @@ class RegistrationForm extends Component {
                       type="text"
                       className="form-control form-control-lg"
                       placeholder="Last Name"
-                      name="projectName"
+                      name="lasttName"
                     />
                   </div>
                 <h6>Username</h6>
@@ -36,7 +83,7 @@ class RegistrationForm extends Component {
                       type="text"
                       className="form-control form-control-lg"
                       placeholder="Username"
-                      name="projectName"
+                      name="username"
                     />
                   </div>
                   <h6>Password</h6>
@@ -45,7 +92,7 @@ class RegistrationForm extends Component {
                       type="text"
                       className="form-control form-control-lg"
                       placeholder="Password"
-                      name="projectIdentifier"
+                      name="password"
                     />
                   </div>
                   <h6>Re-type password</h6>
@@ -53,7 +100,7 @@ class RegistrationForm extends Component {
                     <input
                       className="form-control form-control-lg"
                       placeholder="Password"
-                      name="description"
+                      name="password2"
                     />
                   </div>
                   <input
@@ -72,5 +119,16 @@ class RegistrationForm extends Component {
   }
 }
 
+RegistrationForm.propTypes = {
+    createUser: PropTypes.func.isRequired,
+    errors: PropTypes.object.isRequired
+  };
 
-export default RegistrationForm;
+const mapStateToProps = state => ({
+    errors: state.errors
+  });
+
+  export default connect(
+    mapStateToProps,
+    { createUser }
+     )(RegistrationForm);
