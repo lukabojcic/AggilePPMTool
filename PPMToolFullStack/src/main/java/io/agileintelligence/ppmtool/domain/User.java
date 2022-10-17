@@ -2,51 +2,44 @@ package io.agileintelligence.ppmtool.domain;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.springframework.data.annotation.CreatedDate;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
 @Entity
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @NotBlank(message = "First name is required")
-    @Size(min=3, message = "First name should have at least 3 characters.")
-    private String firstName;
-
-    @NotBlank(message = "Last name is required.")
-    private String lastName;
-
+    @Email(message = "Username needs to be an email.")
     @NotBlank(message = "Username is required.")
-    @Size(min = 5, max = 15)
     @Column(unique = true)
     private String username;
-
+    @NotBlank(message = "Full name is required")
+    private String fullName;
     @NotBlank(message = "Password is required.")
-    @Size(min = 5, max = 15)
-    @Column(unique = true)
     private String password;
+    @Transient
+    private String confirmPassword;
 
+    /*
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    @JsonIgnore
     private List<Project> projects = new ArrayList<>();
+     */
 
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @CreatedDate
     private Date create_At;
 
     private Date update_At;
 
     public User() {
-
     }
 
     public Long getId() {
@@ -57,20 +50,13 @@ public class User {
         this.id = id;
     }
 
-    public String getFirstName() {
-        return firstName;
+
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getUsername() {
@@ -89,12 +75,12 @@ public class User {
         this.password = password;
     }
 
-    public List<Project> getProjects() {
-        return projects;
+    public String getConfirmPassword() {
+        return confirmPassword;
     }
 
-    public void setProjects(List<Project> projects) {
-        this.projects = projects;
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
     }
 
     public Date getCreate_At() {
@@ -121,5 +107,36 @@ public class User {
     @PreUpdate
     protected void onUpdate(){
         this.update_At = new Date();
+    }
+
+    //UserDetails methods
+    @Override
+    //Roles based for additional work (LOOK INTO)
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isEnabled() {
+        return true;
     }
 }
